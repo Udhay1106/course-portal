@@ -1,10 +1,7 @@
 package com.courseportal.coursebackend.service;
 
 
-import com.courseportal.coursebackend.dto.LessonDTO;
-import com.courseportal.coursebackend.dto.LessonRequest;
-import com.courseportal.coursebackend.dto.ModuleDTO;
-import com.courseportal.coursebackend.dto.ModuleRequest;
+import com.courseportal.coursebackend.dto.*;
 import com.courseportal.coursebackend.model.*;
 import com.courseportal.coursebackend.model.Module;
 import com.courseportal.coursebackend.repository.*;
@@ -160,6 +157,37 @@ public class LessonService {
         lesson.setModule(module);
 
         return lessonRepo.save(lesson);
+    }
+    public List<DashboardDTO> getDashboard(String email) {
+
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Enrollment> enrollments = enrollmentRepo.findByUser(user);
+
+        return enrollments.stream().map(enrollment -> {
+
+            Course course = enrollment.getCourse();
+
+            long completedLessons =
+                    progressRepo.countByUserAndLesson_Module_Course(user, course);
+
+            long totalLessons =
+                    lessonRepo.countByModule_Course(course);
+
+            int progress = 0;
+
+            if (totalLessons > 0) {
+                progress = (int) ((completedLessons * 100) / totalLessons);
+            }
+
+            return new DashboardDTO(
+                    course.getId(),
+                    course.getTitle(),
+                    progress
+            );
+
+        }).collect(Collectors.toList());
     }
 }
 
