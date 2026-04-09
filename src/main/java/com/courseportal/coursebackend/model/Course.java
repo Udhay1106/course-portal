@@ -13,8 +13,10 @@ public class Course {
     private String title;
     @Column
     private String description;
-    @Column(nullable = false)
+
+    @Column(name = "instructor_name",nullable = false)
     private String instructorName;
+
     @Column
     private String videoLink;
 

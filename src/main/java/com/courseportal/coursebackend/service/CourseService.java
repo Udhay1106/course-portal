@@ -1,7 +1,9 @@
 package com.courseportal.coursebackend.service;
 
+import com.courseportal.coursebackend.dto.CourseRequest;
 import com.courseportal.coursebackend.model.Course;
 import com.courseportal.coursebackend.repository.CourseRepository;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +33,23 @@ public class CourseService {
         courseRepository.deleteById(id);
     }
     // Create new course
-    public Course createCourse(Course course) {
+
+//    public Course createCourse(Course course) {
+//        return courseRepository.save(course);
+//    }
+
+    public Course createCourse(CourseRequest request) {
+
+        if (request.getInstructorName() == null) {
+            throw new RuntimeException("Instructor name is required");
+        }
+
+        Course course = new Course();
+
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setInstructorName(request.getInstructorName()); // ✅ MUST ADD
+
         return courseRepository.save(course);
     }
 }
