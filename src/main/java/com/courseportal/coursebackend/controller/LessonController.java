@@ -5,6 +5,7 @@ package com.courseportal.coursebackend.controller;
 import com.courseportal.coursebackend.dto.LessonRequest;
 import com.courseportal.coursebackend.model.Lesson;
 import com.courseportal.coursebackend.service.LessonService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +31,10 @@ public class LessonController {
 
         return "Lesson completed";
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Lesson addLesson(@RequestBody LessonRequest request) {
         return service.addLesson(request);
     }
+
 }
